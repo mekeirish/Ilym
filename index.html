@@ -67,12 +67,15 @@ header p{margin-top:8px;color:#98a8c1;font-size:11px;letter-spacing:3px}
 }
 .location-card h2{font-size:18px;color:#ffc928;margin-bottom:8px;letter-spacing:1px}
 .location-card p{font-size:13px;line-height:1.6;color:#aab8ce;margin-bottom:14px}
-.location-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.location-link{
- display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;
- padding:12px 16px;border-radius:12px;text-decoration:none;font-size:13px;font-weight:800;
- background:#ffc928;color:#101522;border:1px solid #ffc928
+.location-actions{
+ display:grid;grid-template-columns:1fr 1fr;gap:10px
 }
+.location-link{
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;
+ padding:12px 14px;border-radius:12px;text-decoration:none;font-size:13px;font-weight:800;
+ background:#ffc928;color:#101522;border:1px solid #ffc928;text-align:center
+}
+.location-link.primary-full{grid-column:1 / -1}
 .location-link.secondary{background:#101a2b;color:#f6f8fc;border-color:#344762}
 footer{text-align:center;color:#71829d;font-size:10px;letter-spacing:2px;margin:28px auto 0}
 #toast{
@@ -141,16 +144,25 @@ footer{text-align:center;color:#71829d;font-size:10px;letter-spacing:2px;margin:
 .empty-cart{color:#aab8ce;font-size:13px;padding:14px 0}
 .customer-input{font-size:14px}
 .cart-card .modal-content{padding-top:28px}
-.delivery-info{
- display:flex;align-items:center;gap:10px;margin:16px 0;padding:12px 14px;
- border:1px dashed #ffc92866;border-radius:12px;background:#1a2437;
- color:#ffc928;font-size:13px;font-weight:800;line-height:1.4
+.delivery-toggle{
+ display:flex;align-items:center;gap:12px;padding:14px;
+ margin-top:16px;border:1px solid #344862;border-radius:12px;
+ background:#0a1322;cursor:pointer;font-size:13px;color:#f6f8fc;
+ font-weight:700;line-height:1.4;transition:border-color .2s,background .2s;
+ user-select:none;-webkit-user-select:none
 }
-.delivery-info .icon{font-size:20px;flex-shrink:0}
+.delivery-toggle:has(input:checked){
+ border-color:#ffc928;background:#1a2437;
+ box-shadow:0 0 0 1px #ffc92844
+}
+.delivery-toggle input{
+ width:22px;height:22px;accent-color:#ffc928;flex-shrink:0;cursor:pointer;
+ margin:0
+}
+.delivery-toggle span{flex:1}
+.delivery-toggle b{color:#ffc928}
 .small-note{font-size:10px;line-height:1.5;color:#8191aa;margin-top:12px}
 body.modal-open{overflow:hidden}
-
-/* نافذة الرقم السري ولوحة الإدارة */
 .admin-card{width:min(100%,440px)}
 .admin-card .modal-content{padding-top:30px}
 .admin-input{font-size:20px;letter-spacing:5px;text-align:center}
@@ -227,10 +239,9 @@ body.modal-open{overflow:hidden}
   <h2>📍 NOUS TROUVER</h2>
   <p>ILYM PIZZA<br>CF7G+M24, Dahmouni, Tiaret, Algérie</p>
   <div class="location-actions">
-    <a class="location-link" href="https://www.google.com/maps/search/?api=1&amp;query=CF7G%2BM24%2C%20Dahmouni%2C%20Algeria" target="_blank" rel="noopener noreferrer">📍 Google Maps</a>
+    <a class="location-link primary-full" href="https://www.google.com/maps/dir/?api=1&amp;destination=CF7G%2BM24%2C%20Dahmouni%2C%20Algeria" target="_blank" rel="noopener noreferrer">🧭 Itinéraire Google Maps</a>
     <a class="location-link secondary" href="https://wa.me/213674817474" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
     <a class="location-link secondary" href="tel:+213674817474">📞 Appeler</a>
-    <a class="location-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=CF7G%2BM24%2C%20Dahmouni%2C%20Algeria" target="_blank" rel="noopener noreferrer">🧭 Itinéraire</a>
   </div>
 </section>
 <footer>ILYM PIZZA · BON APPÉTIT</footer>
@@ -246,23 +257,23 @@ body.modal-open{overflow:hidden}
       <h2 id="cartTitle">Votre panier</h2>
       <div id="cartItems" class="cart-items"><p class="empty-cart">Votre panier est vide.</p></div>
 
-      <div class="delivery-info">
-        <span class="icon">🚚</span>
-        <span>Frais de livraison fixes : <b>100 DA</b> — ajoutés automatiquement à chaque commande.</span>
-      </div>
+      <label class="delivery-toggle" for="deliveryCheckbox">
+        <input type="checkbox" id="deliveryCheckbox">
+        <span>🚚 Je veux la livraison à domicile <b>(+100 DA)</b></span>
+      </label>
 
       <div class="price-row"><span>Sous-total</span><strong id="cartSubtotal">0 DA</strong></div>
-      <div class="price-row"><span>Frais de livraison</span><strong id="deliveryFee">0 DA</strong></div>
+      <div class="price-row" id="deliveryRow" style="display:none"><span>Frais de livraison</span><strong id="deliveryFee">0 DA</strong></div>
       <div class="price-row"><span>Total à payer</span><strong id="cartTotal">0 DA</strong></div>
 
-      <label for="customerName">Nom (facultatif)</label>
-      <input id="customerName" class="customer-input" placeholder="Votre nom" maxlength="80">
+      <label for="customerName">👤 Nom <span class="required-star">*</span></label>
+      <input id="customerName" class="customer-input" placeholder="Votre nom" maxlength="80" required>
 
       <label for="customerPhone">📞 Numéro de téléphone <span class="required-star">*</span></label>
-      <input id="customerPhone" class="customer-input" type="tel" inputmode="tel" placeholder="Ex : 0674 81 74 74" maxlength="20" autocomplete="tel" required="">
+      <input id="customerPhone" class="customer-input" type="tel" inputmode="tel" placeholder="Ex : 0674 81 74 74" maxlength="20" autocomplete="tel" required>
 
-      <label for="customerAddress">🏠 Adresse / livraison <span class="required-star">*</span></label>
-      <input id="customerAddress" class="customer-input" placeholder="Adresse de livraison" maxlength="180" required="">
+      <label for="customerAddress">🏠 Adresse de livraison <span class="required-star" id="addressStar" style="display:none">*</span></label>
+      <input id="customerAddress" class="customer-input" placeholder="Adresse de livraison (si livraison)" maxlength="180">
 
       <button class="order-button" id="checkoutWhatsApp" type="button">Confirmer la commande sur WhatsApp</button>
       <p class="small-note">Les prix sont indicatifs. Le restaurant confirmera la disponibilité et le total.</p>
@@ -306,7 +317,7 @@ body.modal-open{overflow:hidden}
       <p class="description">Entrez votre code numérique pour continuer.</p>
       <form id="passwordForm">
         <label for="adminPassword">Code secret</label>
-        <input class="admin-input" id="adminPassword" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="20" autocomplete="current-password" placeholder="••••••••" required="">
+        <input class="admin-input" id="adminPassword" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="20" autocomplete="current-password" placeholder="••••••••" required>
         <p id="passwordError" class="admin-error" aria-live="polite"></p>
         <button class="admin-button" type="submit">Déverrouiller</button>
       </form>
@@ -338,7 +349,9 @@ body.modal-open{overflow:hidden}
 
 <script>
 const ADMIN_CODE = '14142027';
-const DELIVERY_FEE = 100; /* frais de livraison fixes */
+const DELIVERY_FEE = 100;
+const NTFY_TOPIC = 'testo';
+const NTFY_URL = 'https://ntfy.sh/' + NTFY_TOPIC;
 const toast = document.getElementById('toast');
 let toastTimer;
 
@@ -348,6 +361,22 @@ function showToast(message){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
 }
+
+/* ===== NOTIFICATION NTFY ===== */
+function envoyerNotificationNtfy(titre, message, priorite){
+  fetch(NTFY_URL, {
+    method: 'POST',
+    body: message,
+    headers: {
+      'Title': titre,
+      'Priority': priorite || 'high',
+      'Tags': 'pizza,moneybag'
+    }
+  })
+  .then(()=>console.log('✅ Notification ntfy envoyée'))
+  .catch(err=>console.error('❌ Erreur ntfy:', err));
+}
+/* ============================= */
 
 const menuData={
  "Poutine":{desc:"Poutine — choisissez votre recette.",options:[["Poulet",400],["Mixte",500],["ILYM",700]]},
@@ -486,6 +515,11 @@ modal.addEventListener('click',event=>{if(event.target.dataset.close==='true')cl
 
 const cart=[];
 
+function isDeliverySelected(){
+  const cb=document.getElementById('deliveryCheckbox');
+  return cb ? cb.checked : false;
+}
+
 function openCart(){
   renderCart();
   cartModal.classList.add('open');
@@ -529,17 +563,29 @@ function renderCart(){
   });
 
   const subtotal=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
-  const delivery=cart.length?DELIVERY_FEE:0;
+  const deliverySelected=isDeliverySelected();
+  const delivery=(cart.length && deliverySelected)?DELIVERY_FEE:0;
 
   document.getElementById('cartSubtotal').textContent=subtotal.toLocaleString('fr-FR')+' DA';
   document.getElementById('deliveryFee').textContent=delivery.toLocaleString('fr-FR')+' DA';
   document.getElementById('cartTotal').textContent=(subtotal+delivery).toLocaleString('fr-FR')+' DA';
+
+  const deliveryRow=document.getElementById('deliveryRow');
+  deliveryRow.style.display=deliverySelected?'flex':'none';
+
+  const addressStar=document.getElementById('addressStar');
+  addressStar.style.display=deliverySelected?'inline':'none';
+
   document.getElementById('cartCount').textContent=String(cart.reduce((sum,item)=>sum+item.qty,0));
 }
 
 document.getElementById('openCart').addEventListener('click',openCart);
 document.getElementById('closeCart').addEventListener('click',closeCart);
 cartModal.addEventListener('click',event=>{if(event.target.dataset.cartClose==='true')closeCart();});
+
+document.getElementById('deliveryCheckbox').addEventListener('change',()=>{
+  renderCart();
+});
 
 document.getElementById('orderButton').addEventListener('click',()=>{
   const option=variantSelect.options[variantSelect.selectedIndex];
@@ -553,26 +599,34 @@ document.getElementById('orderButton').addEventListener('click',()=>{
   closeModal();renderCart();showToast('تمت الإضافة إلى السلة 🛒');
 });
 
-/* تحقق من صحة رقم الهاتف */
 function isValidPhone(phone){
   const cleaned=phone.replace(/[\s\-\.\(\)]/g,'');
-  /* يقبل أرقاماً بين 9 و 15 رقماً، اختياري بادئة + */
   return /^\+?\d{9,15}$/.test(cleaned);
 }
 
 document.getElementById('checkoutWhatsApp').addEventListener('click',()=>{
   if(!cart.length){showToast('السلة فارغة، زيد اختار واش تحب');return;}
 
+  const nameInput=document.getElementById('customerName');
   const phoneInput=document.getElementById('customerPhone');
   const addressInput=document.getElementById('customerAddress');
 
+  const name=nameInput.value.trim();
   const phone=phoneInput.value.trim();
   const address=addressInput.value.trim();
+  const deliverySelected=isDeliverySelected();
 
+  nameInput.classList.remove('invalid');
   phoneInput.classList.remove('invalid');
   addressInput.classList.remove('invalid');
 
-  /* التحقق من رقم الهاتف (إجباري) */
+  if(!name){
+    showToast('👤 الرجاء إدخال الاسم');
+    nameInput.classList.add('invalid');
+    nameInput.focus();
+    return;
+  }
+
   if(!phone){
     showToast('📞 الرجاء إدخال رقم الهاتف');
     phoneInput.classList.add('invalid');
@@ -586,8 +640,7 @@ document.getElementById('checkoutWhatsApp').addEventListener('click',()=>{
     return;
   }
 
-  /* التحقق من العنوان (إجباري) */
-  if(!address){
+  if(deliverySelected && !address){
     showToast('🏠 الرجاء إدخال عنوان التوصيل');
     addressInput.classList.add('invalid');
     addressInput.focus();
@@ -595,8 +648,29 @@ document.getElementById('checkoutWhatsApp').addEventListener('click',()=>{
   }
 
   const subtotal=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
-  const delivery=DELIVERY_FEE;
+  const delivery=deliverySelected?DELIVERY_FEE:0;
   const total=subtotal+delivery;
+
+  /* ===== NOTIFICATION NTFY ===== */
+  let messageNtfy='🛒 NOUVELLE COMMANDE ILYM PIZZA\n\n';
+  cart.forEach((item,index)=>{
+    messageNtfy+=(index+1)+'. '+item.name+' — '+item.option+' x'+item.qty+' = '+
+      (item.price*item.qty).toLocaleString('fr-FR')+' DA\n';
+  });
+  messageNtfy+='\nSous-total : '+subtotal.toLocaleString('fr-FR')+' DA';
+  if(deliverySelected){
+    messageNtfy+='\nLivraison : '+delivery+' DA';
+  }
+  messageNtfy+='\nTOTAL : '+total.toLocaleString('fr-FR')+' DA';
+  messageNtfy+='\n\nMode : '+(deliverySelected?'🛵 Livraison':'🏪 Retrait');
+  messageNtfy+='\n👤 '+name;
+  messageNtfy+='\n📞 '+phone;
+  if(deliverySelected && address){
+    messageNtfy+='\n🏠 '+address;
+  }
+
+  envoyerNotificationNtfy('Nouvelle commande ILYM PIZZA', messageNtfy, 'urgent');
+  /* ============================= */
 
   let message='Bonjour ILYM PIZZA ! Je souhaite confirmer cette commande :\n';
   cart.forEach((item,index)=>{
@@ -604,18 +678,23 @@ document.getElementById('checkoutWhatsApp').addEventListener('click',()=>{
       (item.price*item.qty).toLocaleString('fr-FR')+' DA';
   });
   message+='\n\nSous-total : '+subtotal.toLocaleString('fr-FR')+' DA';
-  message+='\nLivraison : '+delivery+' DA (fixe)';
+  if(deliverySelected){
+    message+='\nLivraison : '+delivery+' DA (fixe)';
+  }
   message+='\nTOTAL À PAYER : '+total.toLocaleString('fr-FR')+' DA';
-
-  const name=document.getElementById('customerName').value.trim();
-  if(name)message+='\nNom : '+name;
+  message+='\n\nMode : '+(deliverySelected?'🛵 Livraison à domicile':'🏪 Retrait sur place');
+  message+='\n👤 Nom : '+name;
   message+='\n📞 Téléphone : '+phone;
-  message+='\n🏠 Adresse : '+address;
+  if(deliverySelected && address){
+    message+='\n🏠 Adresse : '+address;
+  }
   message+='\n\nMerci de confirmer la disponibilité et le total.';
   window.open('https://wa.me/213674817474?text='+encodeURIComponent(message),'_blank');
 });
 
-/* إزالة التنبيه الأحمر عند الكتابة */
+document.getElementById('customerName').addEventListener('input',event=>{
+  event.target.classList.remove('invalid');
+});
 document.getElementById('customerPhone').addEventListener('input',event=>{
   event.target.classList.remove('invalid');
 });
@@ -623,7 +702,6 @@ document.getElementById('customerAddress').addEventListener('input',event=>{
   event.target.classList.remove('invalid');
 });
 
-/* الدخول السري: الضغط على الشعار 3 ثوانٍ */
 const secretTrigger=document.getElementById('secretAdminTrigger');
 let pressTimer=null;
 
@@ -679,7 +757,6 @@ document.getElementById('passwordForm').addEventListener('submit',event=>{
   }
 });
 
-/* لوحة إدارة إظهار وإخفاء الأطباق */
 function renderAdminCategories(){
   const wrap=document.getElementById('adminCategories');
   wrap.replaceChildren();
